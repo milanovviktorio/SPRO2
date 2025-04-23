@@ -386,6 +386,10 @@
     [
       "edfea366-2226-45cc-893f-1155e0ffe333",
       "Root"
+    ],
+    [
+      "1ed492d3-a3aa-4e29-adfa-514232caea13",
+      "Temperature sensor filter and amplifier"
     ]
   ],
   "text_variables": {}
