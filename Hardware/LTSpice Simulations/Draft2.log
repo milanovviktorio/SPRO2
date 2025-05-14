@@ -1,0 +1,14 @@
+LTspice 24.1.1 for Windows
+Circuit: C:\Users\Liubo\Documents\SDU\Semester 2\Semester project\SPRO2\Hardware\LTSpice Simulations\Draft2.net
+Start Time: Thu Apr 24 19:09:19 2025
+solver = Normal
+Maximum thread count: 20
+tnom = 27
+temp = 27
+method = trap
+Direct Newton iteration for .op point succeeded.
+Total elapsed time: 0.047 seconds.
+
+Files loaded:
+C:\Users\Liubo\Documents\SDU\Semester 2\Semester project\SPRO2\Hardware\LTSpice Simulations\Draft2.net
+
