@@ -1,129 +1,145 @@
-#include <Wire.h>
-#include "MAX30105.h"
-#include "spo2_algorithm.h"
+#include <MAX3010x.h>
+#include "filters.h"
 
-MAX30105 hrSensor;
+MAX30105 sensor;
+const auto kSamplingRate = sensor.SAMPLING_RATE_400SPS;
+const float kSamplingFrequency = 400.0;
 
-#define MAX_BRIGHTNESS 255
+const unsigned long kFingerThreshold = 10000;
+const unsigned int kFingerCooldownMs = 500;
+const float kEdgeThreshold = -2000.0;
 
-#if defined(__AVR_ATmega328P__) || defined(__AVR_ATmega168__)
-//Arduino Uno doesn't have enough SRAM to store 100 samples of IR led data and red led data in 32-bit format
-//To solve this problem, 16-bit MSB of the sampled data will be truncated. Samples become 16-bit data.
-uint16_t irBuffer[100]; //infrared LED sensor data
-uint16_t redBuffer[100];  //red LED sensor data
-#else
-uint32_t irBuffer[100]; //infrared LED sensor data
-uint32_t redBuffer[100];  //red LED sensor data
-#endif
+const float kLowPassCutoff = 5.0;
+const float kHighPassCutoff = 0.5;
 
-int32_t bufferLength; //data length
-int32_t spo2; //SPO2 value
-int8_t validSPO2; //indicator to show if the SPO2 calculation is valid
-int32_t heartRate; //heart rate value
-int8_t validHeartRate; //indicator to show if the heart rate calculation is valid
+const bool kEnableAveraging = false;
+const int kAveragingSamples = 5;
+const int kSampleThreshold = 5;
 
-byte pulseLED = 11; //Must be on PWM pin
-byte readLED = 13; //Blinks with each data read
+LowPassFilter low_pass_filter_red(kLowPassCutoff, kSamplingFrequency);
+LowPassFilter low_pass_filter_ir(kLowPassCutoff, kSamplingFrequency);
+HighPassFilter high_pass_filter(kHighPassCutoff, kSamplingFrequency);
+Differentiator differentiator(kSamplingFrequency);
+MovingAverageFilter<kAveragingSamples> averager_bpm;
+MovingAverageFilter<kAveragingSamples> averager_r;
+MovingAverageFilter<kAveragingSamples> averager_spo2;
 
-void setup()
-{
-  Serial.begin(9600); // initialize serial communication at 115200 bits per second:
+MinMaxAvgStatistic stat_red;
+MinMaxAvgStatistic stat_ir;
 
-  pinMode(pulseLED, OUTPUT);
-  pinMode(readLED, OUTPUT);
+float kSpO2_A = 1.5958422;
+float kSpO2_B = -34.6596622;
+float kSpO2_C = 112.6898759;
 
-  // Initialize sensor
-  if (!hrSensor.begin(Wire, I2C_SPEED_FAST)) //Use default I2C port, 400kHz speed
-  {
-    Serial.println(F("MAX30105 was not found. Please check wiring/power."));
+long last_heartbeat = 0;
+long finger_timestamp = 0;
+bool finger_detected = false;
+
+float last_diff = NAN;
+bool crossed = false;
+long crossed_time = 0;
+
+void initializeSensor() {
+  Serial.begin(115200);
+  if (sensor.begin() && sensor.setSamplingRate(kSamplingRate)) {
+    Serial.println("Sensor initialized");
+  } else {
+    Serial.println("Sensor not found");
     while (1);
   }
-
-  //settings
-  byte ledBrightness = 60; //Options: 0=Off to 255=50mA
-  byte sampleAverage = 4; //Options: 1, 2, 4, 8, 16, 32
-  byte ledMode = 2; //Options: 1 = Red only, 2 = Red + IR, 3 = Red + IR + Green
-  byte sampleRate = 100; //Options: 50, 100, 200, 400, 800, 1000, 1600, 3200
-  int pulseWidth = 411; //Options: 69, 118, 215, 411
-  int adcRange = 4096; //Options: 2048, 4096, 8192, 16384
-
-  hrSensor.setup(ledBrightness, sampleAverage, ledMode, sampleRate, pulseWidth, adcRange); //Configure sensor with these settings
 }
 
-void loop()
-{
-  bufferLength = 100; //buffer length of 100 stores 4 seconds of samples running at 25sps
 
-  //read the first 100 samples, and determine the signal range
-  readFirstSamples();
-
-  //Continuously taking samples from MAX30102. Heart rate and SpO2 are calculated every 1 second
-  while (1)
-  {
-    readSamples();
-  }
+void resetFilters() {
+  differentiator.reset();
+  averager_bpm.reset();
+  averager_r.reset();
+  averager_spo2.reset();
+  low_pass_filter_red.reset();
+  low_pass_filter_ir.reset();
+  high_pass_filter.reset();
+  stat_red.reset();
+  stat_ir.reset();
+  finger_detected = false;
 }
 
-void readFirstSamples()
-{
-  for (byte i = 0 ; i < bufferLength ; i++)
-  {
-  while (hrSensor.available() == false) //do we have new data?
-      hrSensor.check(); //Check the sensor for new data
-
-    redBuffer[i] = hrSensor.getRed();
-    irBuffer[i] = hrSensor.getIR();
-    hrSensor.nextSample(); //We're finished with this sample so move to next sample
-
-    Serial.print(F("red="));
-    Serial.print(redBuffer[i], DEC);
-    Serial.print(F(", ir="));
-    Serial.println(irBuffer[i], DEC);
+bool detectFinger(unsigned long redValue) {
+  if (redValue > kFingerThreshold) {
+    if (millis() - finger_timestamp > kFingerCooldownMs) {
+      return true;
+    }
+  } else {
+    resetFilters();
+    finger_timestamp = millis();
   }
-  //calculate heart rate and SpO2 after first 100 samples (first 4 seconds of samples)
-  maxim_heart_rate_and_oxygen_saturation(irBuffer, bufferLength, redBuffer, &spo2, &validSPO2, &heartRate, &validHeartRate);
+  return false;
 }
 
-void readSamples()
-{
-  //dumping the first 25 sets of samples in the memory and shift the last 75 sets of samples to the top
-  for (byte i = 25; i < 100; i++)
-  {
-    redBuffer[i - 25] = redBuffer[i];
-    irBuffer[i - 25] = irBuffer[i];
+void processHeartRateAndSpO2(float redFiltered, float irFiltered) {
+  stat_red.process(redFiltered);
+  stat_ir.process(irFiltered);
+
+  float signal = high_pass_filter.process(redFiltered);
+  float current_diff = differentiator.process(signal);
+
+  if (!isnan(current_diff) && !isnan(last_diff)) {
+    if (last_diff > 0 && current_diff < 0) {
+      crossed = true;
+      crossed_time = millis();
+    }
+
+    if (current_diff > 0) {
+      crossed = false;
+    }
+
+    if (crossed && current_diff < kEdgeThreshold) {
+      if (last_heartbeat != 0 && crossed_time - last_heartbeat > 300) {
+        int bpm = 60000 / (crossed_time - last_heartbeat);
+        float rred = (stat_red.maximum() - stat_red.minimum()) / stat_red.average();
+        float rir = (stat_ir.maximum() - stat_ir.minimum()) / stat_ir.average();
+        float r = rred / rir;
+        float spo2 = kSpO2_A * r * r + kSpO2_B * r + kSpO2_C;
+        spo2 = constrain(spo2, 0.0, 100.0);
+
+        if (bpm > 50 && bpm < 250) {
+          if (kEnableAveraging) {
+            int average_bpm = averager_bpm.process(bpm);
+            int average_spo2 = averager_spo2.process(spo2);
+
+            if (averager_bpm.count() >= kSampleThreshold) {
+              Serial.print("HR (avg): "); Serial.println(average_bpm);
+              Serial.print("SpO2 (avg): "); Serial.println(average_spo2);
+            }
+          } else {
+            Serial.print("HR: "); Serial.println(average_bpm);
+            Serial.print("SpO2: "); Serial.println(spo2);
+          }
+        }
+        stat_red.reset();
+        stat_ir.reset();
+      }
+      crossed = false;
+      last_heartbeat = crossed_time;
+    }
   }
 
-  //take 25 sets of samples before calculating the heart rate.
-  for (byte i = 75; i < 100; i++)
-  {
-    while (hrSensor.available() == false) //do we have new data?
-      hrSensor.check(); //Check the sensor for new data
+  last_diff = current_diff;
+}
 
-    digitalWrite(readLED, !digitalRead(readLED)); //Blink onboard LED with every data read
+void setup() {
+  initializeSensor();
+}
 
-    redBuffer[i] = hrSensor.getRed();
-    irBuffer[i] = hrSensor.getIR();
-    hrSensor.nextSample(); //We're finished with this sample so move to next sample
+void loop() {
+  auto sample = sensor.readSample(1000);
+  float red = sample.red;
+  float ir = sample.ir;
 
-    //send samples and calculation result to terminal program through UART
-    Serial.print(F("red="));
-    Serial.print(redBuffer[i], DEC);
-    Serial.print(F(", ir="));
-    Serial.print(irBuffer[i], DEC);
+  finger_detected = detectFinger(red);
 
-    Serial.print(F(", HR="));
-    Serial.print(heartRate, DEC);
-
-    Serial.print(F(", HRvalid="));
-    Serial.print(validHeartRate, DEC);
-
-    Serial.print(F(", SPO2="));
-    Serial.print(spo2, DEC);
-
-    Serial.print(F(", SPO2Valid="));
-    Serial.println(validSPO2, DEC);
+  if (finger_detected) {
+    float redFiltered = low_pass_filter_red.process(red);
+    float irFiltered = low_pass_filter_ir.process(ir);
+    processHeartRateAndSpO2(redFiltered, irFiltered);
   }
-
-  //After gathering 25 new samples recalculate HR and SP02
-  maxim_heart_rate_and_oxygen_saturation(irBuffer, bufferLength, redBuffer, &spo2, &validSPO2, &heartRate, &validHeartRate);
 }
