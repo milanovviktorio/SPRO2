@@ -1995,16 +1995,92 @@
 		(uuid "9eb86e9e-7106-4f52-a3b8-791d83067239")
 	)
 	(no_connect
+		(at 134.62 86.36)
+		(uuid "007f2a52-9cdc-4b9e-8a97-b1af6223f762")
+	)
+	(no_connect
+		(at 134.62 83.82)
+		(uuid "0eb9753a-563e-407b-ad91-dc7ed3aece26")
+	)
+	(no_connect
+		(at 134.62 60.96)
+		(uuid "14321b79-eee5-449b-9fcf-fb7cf997bb3b")
+	)
+	(no_connect
 		(at 160.02 55.88)
 		(uuid "181be446-0d31-41d5-a9d2-ffa8e444208b")
+	)
+	(no_connect
+		(at 160.02 76.2)
+		(uuid "2ef6352f-5fca-4197-9c8a-7bc26c2b3fd0")
+	)
+	(no_connect
+		(at 160.02 86.36)
+		(uuid "43f875b7-c699-4c9c-a4be-6fbf80fcb638")
+	)
+	(no_connect
+		(at 134.62 58.42)
+		(uuid "54caeb42-4010-4f2d-88f3-06ca10acc127")
+	)
+	(no_connect
+		(at 134.62 81.28)
+		(uuid "6cbb4281-89ce-48d1-86b7-651d5bb18d7b")
+	)
+	(no_connect
+		(at 144.78 45.72)
+		(uuid "6ef82f31-ad36-4700-bec7-515793bd6c9e")
+	)
+	(no_connect
+		(at 134.62 68.58)
+		(uuid "78a93ab4-7f0e-4b5a-8d32-0e1021352131")
+	)
+	(no_connect
+		(at 134.62 55.88)
+		(uuid "7ea15007-1e07-4e63-a0be-46a34f8d241d")
+	)
+	(no_connect
+		(at 134.62 78.74)
+		(uuid "91da0dde-64c1-428b-aa87-eb208d591b25")
+	)
+	(no_connect
+		(at 160.02 78.74)
+		(uuid "944bdcf0-622b-4a76-8e86-a6f69618c6a6")
+	)
+	(no_connect
+		(at 134.62 66.04)
+		(uuid "9c314169-59dd-45d2-9037-f7ab1b80dbb8")
+	)
+	(no_connect
+		(at 134.62 73.66)
+		(uuid "ad1418f3-7399-4f53-ae6e-fb24c5aefb70")
+	)
+	(no_connect
+		(at 134.62 76.2)
+		(uuid "b48ede34-a9fe-4a51-8dd4-dc74d80211c3")
+	)
+	(no_connect
+		(at 134.62 71.12)
+		(uuid "bd43bb27-9de0-4aa2-bf7a-898b36b921ff")
 	)
 	(no_connect
 		(at 160.02 66.04)
 		(uuid "c40d381c-43ba-42da-a94b-bccf953cd024")
 	)
 	(no_connect
+		(at 134.62 88.9)
+		(uuid "ce0986f8-4e47-4318-861b-88842b0675e5")
+	)
+	(no_connect
 		(at 160.02 58.42)
 		(uuid "cf44c557-c3bb-4ae1-bcd6-d7f5903a8154")
+	)
+	(no_connect
+		(at 134.62 63.5)
+		(uuid "d88542c4-bc77-48a5-a237-db363eea6920")
+	)
+	(no_connect
+		(at 160.02 88.9)
+		(uuid "ff359676-2ef8-4082-910e-8071a4179eab")
 	)
 	(wire
 		(pts
@@ -3177,7 +3253,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "Diplomna:connector_4p"
+		(property "Footprint" "SPRO_lib:connector_4p"
 			(at 181.61 83.82 0)
 			(effects
 				(font
@@ -3317,7 +3393,7 @@
 				(justify right)
 			)
 		)
-		(property "Footprint" "Diplomna:connector_3p"
+		(property "Footprint" "SPRO_lib:connector_3p"
 			(at 68.58 72.39 0)
 			(effects
 				(font

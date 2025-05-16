@@ -3310,7 +3310,7 @@
 				(justify right)
 			)
 		)
-		(property "Footprint" "Diplomna:connector_2p"
+		(property "Footprint" "SPRO_lib:connector_2p"
 			(at 129.54 73.66 0)
 			(effects
 				(font
