@@ -4475,7 +4475,7 @@
 		)
 	)
 	(sheet
-		(at 262.89 147.32)
+		(at 233.68 137.795)
 		(size 12.7 3.81)
 		(fields_autoplaced yes)
 		(stroke
@@ -4487,7 +4487,7 @@
 		)
 		(uuid "93c1714d-5bc5-4522-b05d-5ce4f6256433")
 		(property "Sheetname" "Negative power supply"
-			(at 262.89 146.6084 0)
+			(at 233.68 137.0834 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -4496,7 +4496,7 @@
 			)
 		)
 		(property "Sheetfile" "nps.kicad_sch"
-			(at 262.89 151.7146 0)
+			(at 233.68 142.1896 0)
 			(effects
 				(font
 					(size 1.27 1.27)
