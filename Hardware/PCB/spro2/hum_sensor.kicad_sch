@@ -1398,12 +1398,6 @@
 		(uuid "9bda48ee-20c6-43bb-9a91-2e68b9887b6b")
 	)
 	(junction
-		(at 233.68 101.6)
-		(diameter 0)
-		(color 0 0 0 0)
-		(uuid "c9467aa8-9abf-4226-bb82-5eae6bfb9dcc")
-	)
-	(junction
 		(at 92.71 105.41)
 		(diameter 0)
 		(color 0 0 0 0)
@@ -1590,16 +1584,6 @@
 			(type default)
 		)
 		(uuid "281bf357-5128-4198-8cbe-91dbf0c68ea3")
-	)
-	(wire
-		(pts
-			(xy 233.68 101.6) (xy 233.68 105.41)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "28996ce8-7d48-49f2-8754-dc364e5e7128")
 	)
 	(wire
 		(pts
@@ -1960,16 +1944,6 @@
 			(type default)
 		)
 		(uuid "9329985e-add0-4620-a6d4-11311c68ff71")
-	)
-	(wire
-		(pts
-			(xy 233.68 113.03) (xy 233.68 115.57)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "9928c875-e030-4ef6-a25c-81a7a4cc1aa8")
 	)
 	(wire
 		(pts
@@ -2542,72 +2516,6 @@
 		)
 	)
 	(symbol
-		(lib_id "power:GND")
-		(at 233.68 115.57 0)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(fields_autoplaced yes)
-		(uuid "1d64d2db-345e-4cc9-abf7-a90faefbd1da")
-		(property "Reference" "#PWR025"
-			(at 233.68 121.92 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Value" "GND"
-			(at 233.68 120.65 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Footprint" ""
-			(at 233.68 115.57 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Datasheet" ""
-			(at 233.68 115.57 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Description" "Power symbol creates a global label with name \"GND\" , ground"
-			(at 233.68 115.57 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(pin "1"
-			(uuid "1d50041f-1a77-4d3e-a15e-0a7fb076347d")
-		)
-		(instances
-			(project "spro2"
-				(path "/edfea366-2226-45cc-893f-1155e0ffe333/64df08b9-4000-4721-b83a-705bd7162f6e"
-					(reference "#PWR025")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
 		(lib_id "power:+5V")
 		(at 73.66 142.24 0)
 		(unit 1)
@@ -2979,7 +2887,7 @@
 				)
 			)
 		)
-		(property "Value" "500"
+		(property "Value" "100k"
 			(at 209.55 112.014 90)
 			(effects
 				(font
@@ -3387,7 +3295,7 @@
 				)
 			)
 		)
-		(property "Value" "1k"
+		(property "Value" "200k"
 			(at 153.67 109.474 90)
 			(effects
 				(font
@@ -3454,7 +3362,7 @@
 				)
 			)
 		)
-		(property "Value" "1k"
+		(property "Value" "200k"
 			(at 224.79 104.14 90)
 			(effects
 				(font
@@ -4049,7 +3957,7 @@
 				)
 			)
 		)
-		(property "Value" "1k"
+		(property "Value" "200k"
 			(at 184.15 147.066 90)
 			(effects
 				(font
@@ -4254,7 +4162,7 @@
 				)
 			)
 		)
-		(property "Value" "1k"
+		(property "Value" "200k"
 			(at 176.53 154.686 90)
 			(effects
 				(font
@@ -4411,76 +4319,6 @@
 		)
 	)
 	(symbol
-		(lib_id "Device:R")
-		(at 233.68 109.22 0)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(fields_autoplaced yes)
-		(uuid "fc8bb0da-5415-4b19-a6f3-8434d40864c9")
-		(property "Reference" "R19"
-			(at 236.22 107.9499 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Value" "10k"
-			(at 236.22 110.4899 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Footprint" "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P10.16mm_Horizontal"
-			(at 231.902 109.22 90)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Datasheet" "~"
-			(at 233.68 109.22 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Description" "Resistor"
-			(at 233.68 109.22 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(pin "1"
-			(uuid "6e82ad79-8287-4b6b-9977-5c6ee8d3c459")
-		)
-		(pin "2"
-			(uuid "1ea384ee-f669-4d04-be39-ebbea09d158e")
-		)
-		(instances
-			(project "spro2"
-				(path "/edfea366-2226-45cc-893f-1155e0ffe333/64df08b9-4000-4721-b83a-705bd7162f6e"
-					(reference "R19")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
 		(lib_id "Device:C")
 		(at 77.47 110.49 0)
 		(unit 1)
@@ -4632,6 +4470,44 @@
 				(path "/edfea366-2226-45cc-893f-1155e0ffe333/64df08b9-4000-4721-b83a-705bd7162f6e"
 					(reference "D3")
 					(unit 1)
+				)
+			)
+		)
+	)
+	(sheet
+		(at 262.89 147.32)
+		(size 12.7 3.81)
+		(fields_autoplaced yes)
+		(stroke
+			(width 0.1524)
+			(type solid)
+		)
+		(fill
+			(color 0 0 0 0.0000)
+		)
+		(uuid "93c1714d-5bc5-4522-b05d-5ce4f6256433")
+		(property "Sheetname" "Negative power supply"
+			(at 262.89 146.6084 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left bottom)
+			)
+		)
+		(property "Sheetfile" "nps.kicad_sch"
+			(at 262.89 151.7146 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left top)
+			)
+		)
+		(instances
+			(project "spro2"
+				(path "/edfea366-2226-45cc-893f-1155e0ffe333/64df08b9-4000-4721-b83a-705bd7162f6e"
+					(page "5")
 				)
 			)
 		)

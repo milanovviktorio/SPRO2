@@ -613,6 +613,10 @@
     [
       "64df08b9-4000-4721-b83a-705bd7162f6e",
       "Humidity sensor"
+    ],
+    [
+      "93c1714d-5bc5-4522-b05d-5ce4f6256433",
+      "Negative power supply"
     ]
   ],
   "text_variables": {}
