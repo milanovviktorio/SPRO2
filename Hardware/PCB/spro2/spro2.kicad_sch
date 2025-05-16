@@ -2515,7 +2515,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "11108bda-5515-4c5b-97cf-b9058539af3a")
-		(property "Reference" "#PWR010"
+		(property "Reference" "#PWR011"
 			(at 175.26 97.79 0)
 			(effects
 				(font
@@ -2565,7 +2565,7 @@
 		(instances
 			(project "spro2"
 				(path "/edfea366-2226-45cc-893f-1155e0ffe333"
-					(reference "#PWR010")
+					(reference "#PWR011")
 					(unit 1)
 				)
 			)
@@ -2580,7 +2580,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "11886a7d-fad0-4b5b-b7ce-e52da9c29075")
-		(property "Reference" "#PWR08"
+		(property "Reference" "#PWR09"
 			(at 152.4 45.72 0)
 			(effects
 				(font
@@ -2630,7 +2630,7 @@
 		(instances
 			(project "spro2"
 				(path "/edfea366-2226-45cc-893f-1155e0ffe333"
-					(reference "#PWR08")
+					(reference "#PWR09")
 					(unit 1)
 				)
 			)
@@ -2645,7 +2645,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "1cb5a87b-d3e5-408c-b320-c547c1f871b8")
-		(property "Reference" "#PWR027"
+		(property "Reference" "#PWR05"
 			(at 115.57 118.11 0)
 			(effects
 				(font
@@ -2695,7 +2695,7 @@
 		(instances
 			(project "spro2"
 				(path "/edfea366-2226-45cc-893f-1155e0ffe333"
-					(reference "#PWR027")
+					(reference "#PWR05")
 					(unit 1)
 				)
 			)
@@ -2710,7 +2710,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "1fc46958-9836-4610-b338-219afc4748f0")
-		(property "Reference" "C7"
+		(property "Reference" "C4"
 			(at 118.872 120.65 0)
 			(effects
 				(font
@@ -2728,7 +2728,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "Capacitor_THT:CP_Radial_D5.0mm_P2.00mm"
+		(property "Footprint" "Capacitor_THT:C_Rect_L7.2mm_W2.5mm_P5.00mm_FKS2_FKP2_MKS2_MKP2"
 			(at 116.5352 125.73 0)
 			(effects
 				(font
@@ -2764,7 +2764,7 @@
 		(instances
 			(project "spro2"
 				(path "/edfea366-2226-45cc-893f-1155e0ffe333"
-					(reference "C7")
+					(reference "C4")
 					(unit 1)
 				)
 			)
@@ -2933,7 +2933,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "3bb14935-d729-423d-92f1-f32d7b7804ef")
-		(property "Reference" "C6"
+		(property "Reference" "C3"
 			(at 107.442 120.65 0)
 			(effects
 				(font
@@ -2951,7 +2951,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "Capacitor_THT:CP_Radial_D5.0mm_P2.00mm"
+		(property "Footprint" "Capacitor_THT:C_Rect_L7.2mm_W2.5mm_P5.00mm_FKS2_FKP2_MKS2_MKP2"
 			(at 105.1052 125.73 0)
 			(effects
 				(font
@@ -2987,7 +2987,7 @@
 		(instances
 			(project "spro2"
 				(path "/edfea366-2226-45cc-893f-1155e0ffe333"
-					(reference "C6")
+					(reference "C3")
 					(unit 1)
 				)
 			)
@@ -3003,7 +3003,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "44efc76b-1a73-47a8-9c0f-9790c3d604d7")
-		(property "Reference" "#PWR030"
+		(property "Reference" "#PWR04"
 			(at 81.28 134.62 0)
 			(effects
 				(font
@@ -3053,7 +3053,7 @@
 		(instances
 			(project "spro2"
 				(path "/edfea366-2226-45cc-893f-1155e0ffe333"
-					(reference "#PWR030")
+					(reference "#PWR04")
 					(unit 1)
 				)
 			)
@@ -3135,7 +3135,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "5126ed0c-7e31-4064-bb77-d2679e7a12de")
-		(property "Reference" "J2"
+		(property "Reference" "J1"
 			(at 184.15 83.8199 0)
 			(effects
 				(font
@@ -3195,7 +3195,7 @@
 		(instances
 			(project ""
 				(path "/edfea366-2226-45cc-893f-1155e0ffe333"
-					(reference "J2")
+					(reference "J1")
 					(unit 1)
 				)
 			)
@@ -3349,7 +3349,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "61def63a-946d-4f70-94c0-906965bc912e")
-		(property "Reference" "C1"
+		(property "Reference" "C5"
 			(at 130.81 119.7609 0)
 			(effects
 				(font
@@ -3403,7 +3403,7 @@
 		(instances
 			(project "spro2"
 				(path "/edfea366-2226-45cc-893f-1155e0ffe333"
-					(reference "C1")
+					(reference "C5")
 					(unit 1)
 				)
 			)
@@ -3419,7 +3419,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "6e86071c-98f6-4914-8bbf-05c692d78bf3")
-		(property "Reference" "C8"
+		(property "Reference" "C2"
 			(at 91.44 119.7609 0)
 			(effects
 				(font
@@ -3473,7 +3473,7 @@
 		(instances
 			(project "spro2"
 				(path "/edfea366-2226-45cc-893f-1155e0ffe333"
-					(reference "C8")
+					(reference "C2")
 					(unit 1)
 				)
 			)
@@ -3617,7 +3617,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "c4749835-7898-4cd1-9e1d-ec830d0841e7")
-		(property "Reference" "#PWR09"
+		(property "Reference" "#PWR010"
 			(at 175.26 80.01 0)
 			(effects
 				(font
@@ -3667,7 +3667,7 @@
 		(instances
 			(project "spro2"
 				(path "/edfea366-2226-45cc-893f-1155e0ffe333"
-					(reference "#PWR09")
+					(reference "#PWR010")
 					(unit 1)
 				)
 			)
@@ -3683,7 +3683,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "c56b38ee-91e2-4b78-9a1b-5a2fa2305ecf")
-		(property "Reference" "#PWR029"
+		(property "Reference" "#PWR03"
 			(at 81.28 119.38 0)
 			(effects
 				(font
@@ -3733,7 +3733,7 @@
 		(instances
 			(project "spro2"
 				(path "/edfea366-2226-45cc-893f-1155e0ffe333"
-					(reference "#PWR029")
+					(reference "#PWR03")
 					(unit 1)
 				)
 			)
@@ -3748,7 +3748,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "c7ab10b7-1c1b-4e86-8c63-2e7112bf8fc0")
-		(property "Reference" "C9"
+		(property "Reference" "C1"
 			(at 78.232 120.65 0)
 			(effects
 				(font
@@ -3766,7 +3766,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "Capacitor_THT:CP_Radial_D5.0mm_P2.00mm"
+		(property "Footprint" "Capacitor_THT:C_Rect_L7.2mm_W2.5mm_P5.00mm_FKS2_FKP2_MKS2_MKP2"
 			(at 75.8952 125.73 0)
 			(effects
 				(font
@@ -3802,7 +3802,7 @@
 		(instances
 			(project "spro2"
 				(path "/edfea366-2226-45cc-893f-1155e0ffe333"
-					(reference "C9")
+					(reference "C1")
 					(unit 1)
 				)
 			)
@@ -3882,7 +3882,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "e4d379ee-bba2-4d39-ad4a-ff867db1acb2")
-		(property "Reference" "#PWR07"
+		(property "Reference" "#PWR08"
 			(at 149.86 45.72 0)
 			(effects
 				(font
@@ -3932,7 +3932,7 @@
 		(instances
 			(project ""
 				(path "/edfea366-2226-45cc-893f-1155e0ffe333"
-					(reference "#PWR07")
+					(reference "#PWR08")
 					(unit 1)
 				)
 			)
@@ -3948,7 +3948,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "e8db9608-a0a8-4d28-8122-65fa658be297")
-		(property "Reference" "#PWR028"
+		(property "Reference" "#PWR06"
 			(at 115.57 135.89 0)
 			(effects
 				(font
@@ -3998,7 +3998,7 @@
 		(instances
 			(project "spro2"
 				(path "/edfea366-2226-45cc-893f-1155e0ffe333"
-					(reference "#PWR028")
+					(reference "#PWR06")
 					(unit 1)
 				)
 			)
@@ -4013,7 +4013,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "f4231e5c-cf43-474d-83e7-1937484d306b")
-		(property "Reference" "#PWR06"
+		(property "Reference" "#PWR07"
 			(at 147.32 107.95 0)
 			(effects
 				(font
@@ -4063,7 +4063,7 @@
 		(instances
 			(project "spro2"
 				(path "/edfea366-2226-45cc-893f-1155e0ffe333"
-					(reference "#PWR06")
+					(reference "#PWR07")
 					(unit 1)
 				)
 			)

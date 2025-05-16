@@ -595,6 +595,17 @@
 		)
 		(uuid "ebd8eb59-c2dd-4cd5-9b24-d1047335f8a7")
 	)
+	(label "-5V"
+		(at 165.1 100.33 0)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "89703e99-a96e-416e-b763-ed8f0f9baffb")
+	)
 	(hierarchical_label "NPS_IN"
 		(shape input)
 		(at 165.1 88.9 0)
@@ -627,7 +638,6 @@
 		(in_bom yes)
 		(on_board yes)
 		(dnp no)
-		(fields_autoplaced yes)
 		(uuid "427b4340-7c03-4f70-9e3b-30f7ab059b06")
 		(property "Reference" "#PWR03"
 			(at 134.62 105.41 0)
@@ -639,7 +649,7 @@
 			)
 		)
 		(property "Value" "GND"
-			(at 134.62 104.14 0)
+			(at 137.922 101.092 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -865,7 +875,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "CP_Radial_D10.0mm_P5.00mm"
 			(at 166.0652 114.3 0)
 			(effects
 				(font
@@ -935,7 +945,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "CP_Radial_D10.0mm_P5.00mm"
 			(at 125.4252 102.87 0)
 			(effects
 				(font
