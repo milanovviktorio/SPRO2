@@ -51,7 +51,17 @@
           "min_clearance": 0.5
         }
       },
+<<<<<<< HEAD
       "diff_pair_dimensions": [],
+=======
+      "diff_pair_dimensions": [
+        {
+          "gap": 0.0,
+          "via_gap": 0.0,
+          "width": 0.0
+        }
+      ],
+>>>>>>> d9dd19ea605bf4a2444113a17f3dc2b3edbf767c
       "drc_exclusions": [],
       "meta": {
         "version": 2
@@ -171,7 +181,15 @@
           "td_width_to_size_filter_ratio": 0.9
         }
       ],
+<<<<<<< HEAD
       "track_widths": [],
+=======
+      "track_widths": [
+        0.0,
+        0.32,
+        0.6
+      ],
+>>>>>>> d9dd19ea605bf4a2444113a17f3dc2b3edbf767c
       "tuning_pattern_settings": {
         "diff_pair_defaults": {
           "corner_radius_percentage": 80,
@@ -198,7 +216,16 @@
           "spacing": 0.6
         }
       },
+<<<<<<< HEAD
       "via_dimensions": [],
+=======
+      "via_dimensions": [
+        {
+          "diameter": 0.0,
+          "drill": 0.0
+        }
+      ],
+>>>>>>> d9dd19ea605bf4a2444113a17f3dc2b3edbf767c
       "zones_allow_external_fillets": false
     },
     "ipc2581": {
@@ -427,7 +454,10 @@
     }
   },
   "libraries": {
-    "pinned_footprint_libs": [],
+    "pinned_footprint_libs": [
+      "SPRO_lib",
+      "Diplomna"
+    ],
     "pinned_symbol_libs": []
   },
   "meta": {
@@ -457,7 +487,12 @@
     "meta": {
       "version": 3
     },
-    "net_colors": null,
+    "net_colors": {
+      "+3.3V": "rgb(230, 27, 0)",
+      "+5V": "rgb(255, 0, 68)",
+      "-5V": "rgb(13, 153, 255)",
+      "GND": "rgb(43, 20, 255)"
+    },
     "netclass_assignments": null,
     "netclass_patterns": []
   },
@@ -466,7 +501,7 @@
       "gencad": "",
       "idf": "",
       "netlist": "",
-      "plot": "",
+      "plot": "Fabrication files/",
       "pos_files": "",
       "specctra_dsn": "",
       "step": "",
@@ -590,6 +625,10 @@
     [
       "64df08b9-4000-4721-b83a-705bd7162f6e",
       "Humidity sensor"
+    ],
+    [
+      "93c1714d-5bc5-4522-b05d-5ce4f6256433",
+      "Negative power supply"
     ]
   ],
   "text_variables": {}
