@@ -1,18 +1,19 @@
 #include <MAX3010x.h>
 #include "filters.h"
+#include <math.h>
 
 MAX30105 sensor;
 const auto kSamplingRate = sensor.SAMPLING_RATE_400SPS;
 const float kSamplingFrequency = 400.0;
 
-const unsigned long kFingerThreshold = 10000;
+const unsigned long kFingerThreshold = 8000;
 const unsigned int kFingerCooldownMs = 500;
 const float kEdgeThreshold = -2000.0;
 
 const float kLowPassCutoff = 5.0;
 const float kHighPassCutoff = 0.5;
 
-const bool kEnableAveraging = false;
+const bool kEnableAveraging = true;
 const int kAveragingSamples = 5;
 const int kSampleThreshold = 5;
 
@@ -39,8 +40,19 @@ float last_diff = NAN;
 bool crossed = false;
 long crossed_time = 0;
 
+//temp
+const int lm35Pin0 = A0;
+int rawTemp0;
+float temp;
+
+//humidity
+const int humPin = A1;
+unsigned int inputHumidity;
+float capVolt=1,opampFactor,offset,z,rh,scalingFactor,resExp;
+unsigned char tempSet;
+
 void initializeSensor() {
-  Serial.begin(115200);
+  Serial.begin(9600);
   if (sensor.begin() && sensor.setSamplingRate(kSamplingRate)) {
     Serial.println("Sensor initialized");
   } else {
@@ -48,7 +60,6 @@ void initializeSensor() {
     while (1);
   }
 }
-
 
 void resetFilters() {
   differentiator.reset();
@@ -75,7 +86,7 @@ bool detectFinger(unsigned long redValue) {
   return false;
 }
 
-void processHeartRateAndSpO2(float redFiltered, float irFiltered) {
+void processData(float redFiltered, float irFiltered) {
   stat_red.process(redFiltered);
   stat_ir.process(irFiltered);
 
@@ -109,10 +120,14 @@ void processHeartRateAndSpO2(float redFiltered, float irFiltered) {
             if (averager_bpm.count() >= kSampleThreshold) {
               Serial.print("HR (avg): "); Serial.println(average_bpm);
               Serial.print("SpO2 (avg): "); Serial.println(average_spo2);
+              Serial.print("Temp: "); Serial.println(temp);
+              Serial.print("Humidity: "); Serial.println(rh);
             }
           } else {
-            Serial.print("HR: "); Serial.println(average_bpm);
+            Serial.print("HR: "); Serial.println(bpm);
             Serial.print("SpO2: "); Serial.println(spo2);
+            Serial.print("Temp: "); Serial.println(temp);
+            Serial.print("Humidity: "); Serial.println(rh);
           }
         }
         stat_red.reset();
@@ -126,7 +141,24 @@ void processHeartRateAndSpO2(float redFiltered, float irFiltered) {
   last_diff = current_diff;
 }
 
+void humiditySetup(){
+  inputHumidity = analogRead(humPin);
+  opampFactor = 24/7;
+  offset = 7/30;
+  tempSet = 20;
+  resExp=(0.0187)*((float)tempSet)-5.68;
+  scalingFactor = (1.286e+12)*exp((-0.112)*((float)tempSet));
+
+  //z=(vcp*m*47)/((5/1024)*((double)input)-b)-47;
+
+  z=(197.4*1024)/(5*((float)inputHumidity)-238.93)-47;
+  rh=pow((z),(1/resExp))/pow((scalingFactor),(1/resExp));
+}
+
 void setup() {
+  pinMode(lm35Pin0, INPUT);
+  pinMode(humPin, INPUT);
+  analogReference(DEFAULT);
   initializeSensor();
 }
 
@@ -140,6 +172,10 @@ void loop() {
   if (finger_detected) {
     float redFiltered = low_pass_filter_red.process(red);
     float irFiltered = low_pass_filter_ir.process(ir);
-    processHeartRateAndSpO2(redFiltered, irFiltered);
+    processData(redFiltered, irFiltered);
   }
+
+  humiditySetup();
+  rawTemp0 = analogRead(lm35Pin0);
+  temp = rawTemp0 * 5*10.0/1023;
 }
