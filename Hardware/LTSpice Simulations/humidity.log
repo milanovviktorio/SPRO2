@@ -1,0 +1,16 @@
+LTspice 24.1.7 for Windows
+Circuit: C:\Users\usnam\Documents\GitHub\SPRO2\Hardware\LTSpice Simulations\humidity.net
+Start Time: Sat May 17 18:22:01 2025
+solver = Normal
+Maximum thread count: 16
+tnom = 27
+temp = 27
+method = trap
+Direct Newton iteration for .op point succeeded.
+Total elapsed time: 1.325 seconds.
+
+Files loaded:
+C:\Users\usnam\Documents\GitHub\SPRO2\Hardware\LTSpice Simulations\humidity.net
+C:\Users\usnam\AppData\Local\LTspice\lib\cmp\standard.dio
+C:\Users\usnam\AppData\Local\LTspice\lib\sub\UniversalOpAmp1.lib
+
