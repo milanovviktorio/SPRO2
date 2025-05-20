@@ -1,7 +1,7 @@
 (kicad_sch
-	(version 20231120)
+	(version 20250114)
 	(generator "eeschema")
-	(generator_version "8.0")
+	(generator_version "9.0")
 	(uuid "03f21dba-ba93-475b-bfe5-f230d84b0e80")
 	(paper "A5")
 	(lib_symbols
@@ -91,17 +91,17 @@
 				)
 			)
 			(symbol "OPA340P_1_1"
-				(pin no_connect line
-					(at -5.08 -2.54 90)
-					(length 2.54) hide
-					(name "NC"
+				(pin input line
+					(at -7.62 2.54 0)
+					(length 2.54)
+					(name "+"
 						(effects
 							(font
 								(size 1.27 1.27)
 							)
 						)
 					)
-					(number "1"
+					(number "3"
 						(effects
 							(font
 								(size 1.27 1.27)
@@ -127,45 +127,10 @@
 						)
 					)
 				)
-				(pin input line
-					(at -7.62 2.54 0)
-					(length 2.54)
-					(name "+"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-					(number "3"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-				)
-				(pin power_in line
-					(at -2.54 -7.62 90)
-					(length 3.81)
-					(name "V-"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-					(number "4"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-				)
 				(pin no_connect line
-					(at -2.54 -2.54 90)
-					(length 2.54) hide
+					(at -5.08 -2.54 90)
+					(length 2.54)
+					(hide yes)
 					(name "NC"
 						(effects
 							(font
@@ -173,25 +138,7 @@
 							)
 						)
 					)
-					(number "5"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-				)
-				(pin output line
-					(at 7.62 0 180)
-					(length 2.54)
-					(name "~"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-					(number "6"
+					(number "1"
 						(effects
 							(font
 								(size 1.27 1.27)
@@ -218,8 +165,46 @@
 					)
 				)
 				(pin no_connect line
+					(at -2.54 -2.54 90)
+					(length 2.54)
+					(hide yes)
+					(name "NC"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "5"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin power_in line
+					(at -2.54 -7.62 90)
+					(length 3.81)
+					(name "V-"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "4"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin no_connect line
 					(at 0 -2.54 90)
-					(length 2.54) hide
+					(length 2.54)
+					(hide yes)
 					(name "NC"
 						(effects
 							(font
@@ -235,10 +220,31 @@
 						)
 					)
 				)
+				(pin output line
+					(at 7.62 0 180)
+					(length 2.54)
+					(name "~"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "6"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
 			)
+			(embedded_fonts no)
 		)
-		(symbol "Device:C"
-			(pin_numbers hide)
+		(symbol "Device:C_Polarized"
+			(pin_numbers
+				(hide yes)
+			)
 			(pin_names
 				(offset 0.254)
 			)
@@ -254,7 +260,7 @@
 					(justify left)
 				)
 			)
-			(property "Value" "C"
+			(property "Value" "C_Polarized"
 				(at 0.635 -2.54 0)
 				(effects
 					(font
@@ -281,7 +287,7 @@
 					(hide yes)
 				)
 			)
-			(property "Description" "Unpolarized capacitor"
+			(property "Description" "Polarized capacitor"
 				(at 0 0 0)
 				(effects
 					(font
@@ -299,7 +305,7 @@
 					(hide yes)
 				)
 			)
-			(property "ki_fp_filters" "C_*"
+			(property "ki_fp_filters" "CP_*"
 				(at 0 0 0)
 				(effects
 					(font
@@ -308,13 +314,12 @@
 					(hide yes)
 				)
 			)
-			(symbol "C_0_1"
-				(polyline
-					(pts
-						(xy -2.032 -0.762) (xy 2.032 -0.762)
-					)
+			(symbol "C_Polarized_0_1"
+				(rectangle
+					(start -2.286 0.508)
+					(end 2.286 1.016)
 					(stroke
-						(width 0.508)
+						(width 0)
 						(type default)
 					)
 					(fill
@@ -323,18 +328,41 @@
 				)
 				(polyline
 					(pts
-						(xy -2.032 0.762) (xy 2.032 0.762)
+						(xy -1.778 2.286) (xy -0.762 2.286)
 					)
 					(stroke
-						(width 0.508)
+						(width 0)
 						(type default)
 					)
 					(fill
 						(type none)
+					)
+				)
+				(polyline
+					(pts
+						(xy -1.27 2.794) (xy -1.27 1.778)
+					)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(rectangle
+					(start 2.286 -0.508)
+					(end -2.286 -1.016)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type outline)
 					)
 				)
 			)
-			(symbol "C_1_1"
+			(symbol "C_Polarized_1_1"
 				(pin passive line
 					(at 0 3.81 270)
 					(length 2.794)
@@ -372,9 +400,12 @@
 					)
 				)
 			)
+			(embedded_fonts no)
 		)
 		(symbol "Device:R"
-			(pin_numbers hide)
+			(pin_numbers
+				(hide yes)
+			)
 			(pin_names
 				(offset 0)
 			)
@@ -493,12 +524,17 @@
 					)
 				)
 			)
+			(embedded_fonts no)
 		)
 		(symbol "power:+5V"
 			(power)
-			(pin_numbers hide)
+			(pin_numbers
+				(hide yes)
+			)
 			(pin_names
-				(offset 0) hide)
+				(offset 0)
+				(hide yes)
+			)
 			(exclude_from_sim no)
 			(in_bom yes)
 			(on_board yes)
@@ -570,7 +606,7 @@
 				)
 				(polyline
 					(pts
-						(xy 0 0) (xy 0 2.54)
+						(xy 0 2.54) (xy 0.762 1.27)
 					)
 					(stroke
 						(width 0)
@@ -582,7 +618,7 @@
 				)
 				(polyline
 					(pts
-						(xy 0 2.54) (xy 0.762 1.27)
+						(xy 0 0) (xy 0 2.54)
 					)
 					(stroke
 						(width 0)
@@ -613,12 +649,17 @@
 					)
 				)
 			)
+			(embedded_fonts no)
 		)
 		(symbol "power:GND"
 			(power)
-			(pin_numbers hide)
+			(pin_numbers
+				(hide yes)
+			)
 			(pin_names
-				(offset 0) hide)
+				(offset 0)
+				(hide yes)
+			)
 			(exclude_from_sim no)
 			(in_bom yes)
 			(on_board yes)
@@ -709,6 +750,7 @@
 					)
 				)
 			)
+			(embedded_fonts no)
 		)
 	)
 	(junction
@@ -737,16 +779,6 @@
 	)
 	(wire
 		(pts
-			(xy 127 62.23) (xy 127 57.15)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "07803454-5773-4eb9-9e3a-cd997b8c99d9")
-	)
-	(wire
-		(pts
 			(xy 127 44.45) (xy 127 49.53)
 		)
 		(stroke
@@ -757,13 +789,13 @@
 	)
 	(wire
 		(pts
-			(xy 123.19 62.23) (xy 127 62.23)
+			(xy 127 57.15) (xy 127 62.23)
 		)
 		(stroke
 			(width 0)
 			(type default)
 		)
-		(uuid "0e95bdd8-6ece-4804-913d-1198b808a1c3")
+		(uuid "0eea7494-5359-4af8-a3d2-7a24c81d28e7")
 	)
 	(wire
 		(pts
@@ -917,6 +949,16 @@
 	)
 	(wire
 		(pts
+			(xy 123.19 62.23) (xy 127 62.23)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "c381554f-f3c3-4bf1-bba5-19053d4cf6ff")
+	)
+	(wire
+		(pts
 			(xy 127 44.45) (xy 125.73 44.45)
 		)
 		(stroke
@@ -958,7 +1000,6 @@
 	(hierarchical_label "Temp_In"
 		(shape input)
 		(at 80.01 41.91 180)
-		(fields_autoplaced yes)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -970,7 +1011,6 @@
 	(hierarchical_label "Temp_Out"
 		(shape input)
 		(at 128.27 44.45 0)
-		(fields_autoplaced yes)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -988,7 +1028,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "1b3b9c4e-e9bb-4ffb-ae5e-2fde9dfcaba8")
-		(property "Reference" "#PWR014"
+		(property "Reference" "#PWR015"
 			(at 115.57 39.37 0)
 			(effects
 				(font
@@ -1038,7 +1078,7 @@
 		(instances
 			(project "spro2"
 				(path "/edfea366-2226-45cc-893f-1155e0ffe333/1ed492d3-a3aa-4e29-adfa-514232caea13"
-					(reference "#PWR014")
+					(reference "#PWR015")
 					(unit 1)
 				)
 			)
@@ -1114,75 +1154,6 @@
 		)
 	)
 	(symbol
-		(lib_id "Device:C")
-		(at 96.52 46.99 0)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(uuid "929f4386-e1c7-4077-8486-2dc3d85d24e7")
-		(property "Reference" "C2"
-			(at 91.186 46.99 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Value" "2.2u"
-			(at 99.314 46.99 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Footprint" "Capacitor_THT:CP_Radial_D5.0mm_P2.00mm"
-			(at 97.4852 50.8 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Datasheet" "~"
-			(at 96.52 46.99 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Description" "Unpolarized capacitor"
-			(at 96.52 46.99 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(pin "2"
-			(uuid "8176dfcc-b3a0-4f6a-97a8-594b09b4af1f")
-		)
-		(pin "1"
-			(uuid "89864232-8394-4dfd-b2b3-f400cceb59ea")
-		)
-		(instances
-			(project ""
-				(path "/edfea366-2226-45cc-893f-1155e0ffe333/1ed492d3-a3aa-4e29-adfa-514232caea13"
-					(reference "C2")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
 		(lib_id "power:GND")
 		(at 115.57 53.34 0)
 		(unit 1)
@@ -1191,7 +1162,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "954fbd32-e2ef-49b1-909c-0f25391321f3")
-		(property "Reference" "#PWR015"
+		(property "Reference" "#PWR016"
 			(at 115.57 59.69 0)
 			(effects
 				(font
@@ -1241,7 +1212,7 @@
 		(instances
 			(project "spro2"
 				(path "/edfea366-2226-45cc-893f-1155e0ffe333/1ed492d3-a3aa-4e29-adfa-514232caea13"
-					(reference "#PWR015")
+					(reference "#PWR016")
 					(unit 1)
 				)
 			)
@@ -1323,7 +1294,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "aba7e92b-015d-4c7c-8672-51e25ee8152b")
-		(property "Reference" "#PWR012"
+		(property "Reference" "#PWR013"
 			(at 96.52 67.31 0)
 			(effects
 				(font
@@ -1373,7 +1344,7 @@
 		(instances
 			(project "spro2"
 				(path "/edfea366-2226-45cc-893f-1155e0ffe333/1ed492d3-a3aa-4e29-adfa-514232caea13"
-					(reference "#PWR012")
+					(reference "#PWR013")
 					(unit 1)
 				)
 			)
@@ -1457,7 +1428,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "b85c298c-4f73-418e-bfe8-261424048117")
-		(property "Reference" "#PWR011"
+		(property "Reference" "#PWR012"
 			(at 96.52 58.42 0)
 			(effects
 				(font
@@ -1507,7 +1478,7 @@
 		(instances
 			(project "spro2"
 				(path "/edfea366-2226-45cc-893f-1155e0ffe333/1ed492d3-a3aa-4e29-adfa-514232caea13"
-					(reference "#PWR011")
+					(reference "#PWR012")
 					(unit 1)
 				)
 			)
@@ -1581,6 +1552,76 @@
 		)
 	)
 	(symbol
+		(lib_id "Device:C_Polarized")
+		(at 96.52 46.99 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "c8e6bf67-2e03-473f-9114-f23a369ff77c")
+		(property "Reference" "C6"
+			(at 100.33 44.8309 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "2.2u"
+			(at 100.33 47.3709 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "Capacitor_THT:CP_Radial_D6.3mm_P2.50mm"
+			(at 97.4852 50.8 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "~"
+			(at 96.52 46.99 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Polarized capacitor"
+			(at 96.52 46.99 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "0e2b70b7-d339-418c-aaff-96af2d2a187c")
+		)
+		(pin "2"
+			(uuid "53a6d525-08e8-4819-8f13-d129d861fa03")
+		)
+		(instances
+			(project "spro2"
+				(path "/edfea366-2226-45cc-893f-1155e0ffe333/1ed492d3-a3aa-4e29-adfa-514232caea13"
+					(reference "C6")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
 		(lib_id "power:GND")
 		(at 96.52 83.82 0)
 		(unit 1)
@@ -1590,7 +1631,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "e0fd1cdd-52c5-498b-b460-4830d7f5d5aa")
-		(property "Reference" "#PWR013"
+		(property "Reference" "#PWR014"
 			(at 96.52 90.17 0)
 			(effects
 				(font
@@ -1640,7 +1681,7 @@
 		(instances
 			(project ""
 				(path "/edfea366-2226-45cc-893f-1155e0ffe333/1ed492d3-a3aa-4e29-adfa-514232caea13"
-					(reference "#PWR013")
+					(reference "#PWR014")
 					(unit 1)
 				)
 			)
@@ -1725,7 +1766,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "e6446e70-a0a8-4ba7-bb16-d9fd5f86fd5b")
-		(property "Reference" "R20"
+		(property "Reference" "R4"
 			(at 129.54 52.0699 0)
 			(effects
 				(font
@@ -1743,7 +1784,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P10.16mm_Horizontal"
 			(at 125.222 53.34 90)
 			(effects
 				(font
@@ -1779,7 +1820,7 @@
 		(instances
 			(project ""
 				(path "/edfea366-2226-45cc-893f-1155e0ffe333/1ed492d3-a3aa-4e29-adfa-514232caea13"
-					(reference "R20")
+					(reference "R4")
 					(unit 1)
 				)
 			)
