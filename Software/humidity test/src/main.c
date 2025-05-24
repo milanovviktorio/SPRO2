@@ -4,7 +4,7 @@
 #include <util/delay.h>
 
 #include "usart.h"
-#include "adcpwm.h"
+//#include "adcpwm.h"
 #include <math.h>
 
 
@@ -13,43 +13,42 @@ int main(void)
   
   uart_init();
   io_redirect();
-  adc_init(); // initialize the ADC module
+  //adc_init(); // initialize the ADC module
   printf("freak\n");
 
   DDRC = 0b11110000; // configure pins PC0 to PC3 as inputs
   PORTC = 0b00110000; // configure pins PC0 to PC3 to not use pullups for the ADC
 
-  unsigned int input;
+  unsigned int inputHumidity;
 
-  float vcp,m,b,rs,rh,a,bb;
+  float capVolt,scalingFactor,offset,resExp,rh,opampFactor,z;
 
-  unsigned char t;
+  unsigned char tempSet;
 
   while(1)
   {
-    scanf("%u", &input);
+    scanf("%u", &inputHumidity);
     //adc_value = adc_read(0); // Value 0-1023 representing analog voltage on pin PC0
     
-    vcp=1;
+    opampFactor = 5.25;
+    offset = 0.2325;
+    tempSet = 20;
+    capVolt=0.85;
+    resExp=(0.0187)*(tempSet)-5.68;
+    scalingFactor = (1.286e+12)*exp((-0.112)*(tempSet));
+  
+    //z=(vcp*m*47)/((5/1024)*((double)input)-b)-47;
 
-    m=21/4;
-    b=7/30;
-    t=20;
-    bb=(0.0187)*((float)t)-5.68;
-    a=(1.286e+12)*exp((-0.112)*((float)t));
+    printf("uno : %f\n", (capVolt*opampFactor*1024*47)); 
+    printf("dos : %f\n", ((4.8)*((float)inputHumidity)-offset*1024)); 
+    printf("tre : %f\n", (capVolt*opampFactor*1024*47)/((4.8)*((float)inputHumidity)-offset*1024)); 
+  
+    z=(capVolt*opampFactor*1024*47)/((4.8)*((float)inputHumidity)-offset*1024)-47;
+  
+    rh=pow((z),(1/resExp))/pow((scalingFactor),(1/resExp));
+  
 
-    printf("a : %f\n", a); 
-    printf("bb : %f\n", bb); 
-    printf("aaaaaaaaa : %f\n", pow((a),(1/bb)));
-
-    printf("%f\n",(float)input);
-    //rs=(vcp*m*47)/((5/1024)*((double)input)-b)-47;
-
-    rs=(197.4*1024)/(5*((float)input)-238.93)-47;
-
-    rh=pow((rs),(1/bb))/pow((a),(1/bb));
-
-    printf("Result of the ADC conversion : %f\n", rs); 
+    printf("Result of the ADC conversion : %f\n", z); 
     printf("Result : %f\n", rh); 
   }
 }
