@@ -21,7 +21,7 @@ int main(void)
 
   unsigned int inputHumidity;
 
-  float capVolt,scalingFactor,offset,resExp,rh,opampFactor,z;
+  float capVolt,scalingFactor,offset,resExp,rh,opampFactor,z,capOffset,capFactor;
 
   unsigned char tempSet;
 
@@ -30,10 +30,12 @@ int main(void)
     scanf("%u", &inputHumidity);
     //adc_value = adc_read(0); // Value 0-1023 representing analog voltage on pin PC0
     
-    opampFactor = 5.25;
+    opampFactor = 4.75;
     offset = 0.2325;
-    tempSet = 20;
-    capVolt=0.85;
+    tempSet = 55;
+    capOffset=1.28;
+    capFactor=-6e-04;
+    capVolt=capFactor*inputHumidity+capOffset;
     resExp=(0.0187)*(tempSet)-5.68;
     scalingFactor = (1.286e+12)*exp((-0.112)*(tempSet));
   
