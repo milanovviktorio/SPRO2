@@ -2,23 +2,22 @@
 #include "filters.h"
 #include <math.h>
 
-#define SIZE 10
+#define SIZE 25
 
 MAX30105 sensor;
 const auto kSamplingRate = sensor.SAMPLING_RATE_400SPS;
 const float kSamplingFrequency = 400.0;
 
-const unsigned long kFingerThreshold = 9000;
+const unsigned long kFingerThreshold = 8000;
 const unsigned int kFingerCooldownMs = 500;
 const float kEdgeThreshold = -2000.0;
 
 const float kLowPassCutoff = 5.0;
 const float kHighPassCutoff = 0.5;
 
-bool calibrationEnable = true;
-const bool kEnableAveraging = false;
+const bool kEnableAveraging = true;
 const int kAveragingSamples = 5;
-const int kSampleThreshold = 2;
+const int kSampleThreshold = 5;
 
 LowPassFilter low_pass_filter_red(kLowPassCutoff, kSamplingFrequency);
 LowPassFilter low_pass_filter_ir(kLowPassCutoff, kSamplingFrequency);
@@ -44,30 +43,25 @@ bool crossed = false;
 long crossed_time = 0;
 
 int average_bpm; 
-int average_spo2;
-int bpm;
-float spo2;
-float redFiltered, irFiltered;
+float average_spo2;
+
 float stressScore;
-float averageStress;
 
 //temp
 const int lm35Pin0 = A0;
-float rawTemp0;
+int rawTemp0;
 float temp;
-int i = 0;
 
 //humidity
 const int humPin = A1;
 unsigned int inputHumidity;
-float capOffset, capVolt, capFactor,opampFactor,offset,z,rHumidity,scalingFactor,resExp;
+float capVolt=1,opampFactor,offset,z,rHumidity,scalingFactor,resExp;
 unsigned char tempSet;
-float total;
-float humiditySamples[15];
+unsigned int total;
+unsigned int humiditySamples[15];
 
 //calibration
-float calibrationData[4][SIZE];
-float zScores[4];
+int calibrationData[4][SIZE];
 float means[4];
 float stdDevs[4];
 
@@ -81,7 +75,7 @@ void initializeSensor() {
   }
 }
 
-void humidty(){
+void humiditySetup(){
   total=0;
   for(int i=0;i<15;i++)
   {
@@ -89,14 +83,12 @@ void humidty(){
     total+=humiditySamples[i];
   }
   inputHumidity = total/15;
-  opampFactor = 4.75;
-  offset = 0.2325;
-  tempSet = 55;
-  capOffset=1.28;
-  capFactor=-6e-04;
-  capVolt=capFactor*inputHumidity+capOffset;
-  resExp=(0.0187)*(tempSet)-5.68;
-  scalingFactor = (1.286e+12)*exp((-0.112)*(tempSet));
+  opampFactor = 21/4;
+  offset = 7/30;
+  tempSet = 20;
+  capVolt=0.85;
+  resExp=(0.0187)*(temp)-5.68;
+  scalingFactor = (1.286e+12)*exp((-0.112)*(temp));
 
   //z=(vcp*m*47)/((5/1024)*((double)input)-b)-47;
 
@@ -118,65 +110,13 @@ void resetFilters() {
   finger_detected = false;
 }
 
-float getZScore(int index, float value) {
-  if (stdDevs[index] == 0) return 0;
-  return abs((value - means[index]) / stdDevs[index]);
-}
-
-float computeStressScore(float z[]) {
-
-  float w_hr   = 1.8;
-  float w_temp = 1.0;
-  float w_hum  = 0.8;
-  float w_spo2 = 1.2;
-
-  // Signed combination: HR (+), Temp (−), Hum (+), SpO2 (−)
-  float stressIndex = w_hr*z[0] - w_temp*z[1] + w_hum*z[2] - w_spo2*z[3];
-
-  float stressScore = constrain(10*stressIndex, 0, 100);
-  return stressScore;
-}
-
-void printValues(float bpm, float spo2) {
-  if (calibrationEnable)
-  {
-    calibrationData[0][i] = bpm;
-    calibrationData[1][i] = temp;
-    calibrationData[2][i] = rHumidity;
-    calibrationData[3][i] = spo2;
-    for (int j = 0; j < 4; j++) {
-    Serial.print(calibrationData[j][i]);
-    Serial.print(" ");
-  }
-  Serial.println();
-  }
-  else
-  {
-    zScores[0] = getZScore(0, bpm);
-    zScores[1] = getZScore(1, temp);
-    zScores[2] = getZScore(2, rHumidity);
-    zScores[3] = getZScore(3, spo2);
-    Serial.println("zScores: " + String(zScores[0]) + " " + String(zScores[1]) + " " + String(zScores[2]) + " " + String(zScores[3]));
-    stressScore = computeStressScore(zScores);
-    Serial.print("HR: "); Serial.println(bpm);
-    Serial.print("Temp: "); Serial.println(temp);
-    Serial.print("Humidity: "); Serial.println(rHumidity);
-    Serial.print("SpO2: "); Serial.println(spo2);
-    Serial.print("Stress Score: "); Serial.print(averageStress);
-    if (averageStress > 47)
-    {
-      Serial.println(" Stress Detected");
-    }
-    else
-    {
-      Serial.println();
-    }
-  }
-  i++;
-  if (i >= SIZE)
-  {
-    calibrationEnable = false;
-  }
+void printValues(int bpm, float spo2) {
+  Serial.print("HR: "); Serial.println(bpm);
+  Serial.print("SpO2: "); Serial.println(spo2);
+  Serial.print("Temp: "); Serial.println(temp);
+  Serial.print("Humidity: "); Serial.println(rHumidity);
+  Serial.print("Stress Score: "); Serial.println(stressScore);
+  delay(500);
 }
 
 bool detectFinger(unsigned long redValue) {
@@ -191,7 +131,37 @@ bool detectFinger(unsigned long redValue) {
   return false;
 }
 
-void processData(float redFiltered, float irFiltered) {
+void computeStats() {
+  for (int i = 0; i < 4; i++) {
+    float sum = 0;
+    for (int j = 0; j < SIZE; j++) {
+      sum += calibrationData[i][j];
+    }
+
+    means[i] = sum / SIZE;
+
+    float varianceSum = 0;
+
+    for (int j = 0; j < SIZE; j++) {
+      varianceSum += pow(calibrationData[i][j] - means[i], 2);
+    }
+    stdDevs[i] = sqrt(varianceSum / SIZE);
+  }
+}
+
+float getZScore(int index, float value) {
+  if (stdDevs[index] == 0) return 0;
+  return (value - means[index]) / stdDevs[index];
+}
+
+float computeStressScore(float z[]) {
+  // Signed combination: HR (+), Temp (−), Hum (+), SpO2 (−)
+  float stressIndex = z[0] - z[1] + z[2] - z[3];
+  float stressScore = constrain(50 + 10 * stressIndex, 0, 100);
+  return stressScore;
+}
+
+float processData(float redFiltered, float irFiltered) {
   stat_red.process(redFiltered);
   stat_ir.process(irFiltered);
 
@@ -210,11 +180,11 @@ void processData(float redFiltered, float irFiltered) {
 
     if (crossed && current_diff < kEdgeThreshold) {
       if (last_heartbeat != 0 && crossed_time - last_heartbeat > 300) {
-        bpm = 60000 / (crossed_time - last_heartbeat);
+        int bpm = 60000 / (crossed_time - last_heartbeat);
         float rred = (stat_red.maximum() - stat_red.minimum()) / stat_red.average();
         float rir = (stat_ir.maximum() - stat_ir.minimum()) / stat_ir.average();
         float r = rred / rir;
-        spo2 = kSpO2_A * r * r + kSpO2_B * r + kSpO2_C;
+        float spo2 = kSpO2_A * r * r + kSpO2_B * r + kSpO2_C;
         spo2 = constrain(spo2, 0.0, 100.0);
 
         if (bpm > 50 && bpm < 250) {
@@ -223,9 +193,12 @@ void processData(float redFiltered, float irFiltered) {
             average_spo2 = averager_spo2.process(spo2);
 
             if (averager_bpm.count() >= kSampleThreshold) {
+              return average_bpm, average_spo2;
               printValues(average_bpm, average_spo2);
             }
+
           } else {
+            return bpm, spo2;
             printValues(bpm, spo2);
           }
         }
@@ -240,31 +213,28 @@ void processData(float redFiltered, float irFiltered) {
   last_diff = current_diff;
 }
 
-void computeStats() {
-  for (int i = 0; i < 4; i++) {
-    float sum = 0;
-    for (int j = 0; j < SIZE; j++) {
-      sum += (float)calibrationData[i][j];
+void calibration()  {
+  auto sample = sensor.readSample(1000);
+  float red = sample.red;
+  float ir = sample.ir;
+
+  humiditySetup();
+  rawTemp0 = analogRead(lm35Pin0);
+  temp = rawTemp0 * 5*10.0/1023;
+
+  if (detectFinger(red)) {
+    float redFiltered = low_pass_filter_red.process(red);
+    float irFiltered = low_pass_filter_ir.process(ir);
+    processData(redFiltered, irFiltered);
+
+    for (int i = 0; i < SIZE; i++) {
+      calibrationData[0][i] = average_bpm;
+      calibrationData[1][i] = temp;
+      calibrationData[2][i] = rHumidity;
+      calibrationData[3][i] = average_spo2;
     }
-
-    means[i] = sum / SIZE;
-
-    float varianceSum = 0;
-
-    for (int j = 0; j < SIZE; j++) {
-      varianceSum += pow(calibrationData[i][j] - means[i], 2);
-    }
-    stdDevs[i] = sqrt(varianceSum / SIZE);
+    computeStats();
   }
-}
-
-float calculateAverageStress(float stressArray[]) {
-  float sum = 0;
-  float averageStress;
-  for (int i = 0; i < 5; i++) {
-    sum += stressArray[i];
-  }
-  return averageStress = sum / 5;
 }
 
 void setup() {
@@ -272,6 +242,7 @@ void setup() {
   pinMode(humPin, INPUT);
   analogReference(DEFAULT);
   initializeSensor();
+  calibration();
 }
 
 void loop() {
@@ -279,23 +250,21 @@ void loop() {
   float red = sample.red;
   float ir = sample.ir;
   
-  humidty();
   rawTemp0 = analogRead(lm35Pin0);
   temp = rawTemp0 * 5*10.0/1023;
 
   if (detectFinger(red)) {
-    redFiltered = low_pass_filter_red.process(red);
-    irFiltered = low_pass_filter_ir.process(ir);
-
+    float redFiltered = low_pass_filter_red.process(red);
+    float irFiltered = low_pass_filter_ir.process(ir);
     processData(redFiltered, irFiltered);
-    
-    computeStats();
 
-    float stressArray[5];
+    float zScores[4];
+    zScores[0] = getZScore(0, average_bpm);
+    zScores[1] = getZScore(1, temp);
+    zScores[2] = getZScore(2, rHumidity);
+    zScores[3] = getZScore(3, average_spo2);
+    stressScore = computeStressScore(zScores);
 
-    for (int i = 0; i < 5; i++) {
-      stressArray[i] = stressScore;
-    }
-    averageStress = calculateAverageStress(stressArray);
+    printValues(average_bpm, average_spo2);
   }
 }
