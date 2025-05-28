@@ -2,7 +2,7 @@
 #include "filters.h"
 #include <math.h>
 
-#define SIZE 10
+#define SIZE 15
 
 MAX30105 sensor;
 const auto kSamplingRate = sensor.SAMPLING_RATE_400SPS;
@@ -16,6 +16,7 @@ const float kLowPassCutoff = 5.0;
 const float kHighPassCutoff = 0.5;
 
 bool calibrationEnable = true;
+bool printMeansAndStddevs = true;
 const bool kEnableAveraging = false;
 const int kAveragingSamples = 5;
 const int kSampleThreshold = 2;
@@ -49,7 +50,7 @@ int bpm;
 float spo2;
 float redFiltered, irFiltered;
 float stressScore;
-float averageStress;
+float w_hr, w_temp, w_hum, w_spo2;   
 
 //temp
 const int lm35Pin0 = A0;
@@ -118,40 +119,75 @@ void resetFilters() {
   finger_detected = false;
 }
 
+void computeStats() {
+  for (int i = 0; i < 4; i++) {
+    float sum = 0;
+    for (int j = 0; j < SIZE; j++) {
+      sum += (float)calibrationData[i][j];
+    }
+
+    means[i] = sum / SIZE;
+
+    float varianceSum = 0;
+
+    for (int j = 0; j < SIZE; j++) {
+      varianceSum += pow(calibrationData[i][j] - means[i], 2);
+    }
+    stdDevs[i] = sqrt(varianceSum / SIZE);
+  }
+}
+
 float getZScore(int index, float value) {
   if (stdDevs[index] == 0) return 0;
-  return abs((value - means[index]) / stdDevs[index]);
+  return (value - means[index]) / stdDevs[index];
 }
 
 float computeStressScore(float z[]) {
 
-  float w_hr   = 1.8;
-  float w_temp = 1.0;
-  float w_hum  = 0.8;
-  float w_spo2 = 1.2;
+  int offset = 50;
 
   // Signed combination: HR (+), Temp (−), Hum (+), SpO2 (−)
   float stressIndex = w_hr*z[0] - w_temp*z[1] + w_hum*z[2] - w_spo2*z[3];
 
-  float stressScore = constrain(10*stressIndex, 0, 100);
+  float stressScore = constrain(stressIndex + offset, 0, 100);
   return stressScore;
 }
 
 void printValues(float bpm, float spo2) {
   if (calibrationEnable)
   {
+    if (i == 0)
+    {
+      Serial.println("Calibration Data: ");
+    }
     calibrationData[0][i] = bpm;
     calibrationData[1][i] = temp;
     calibrationData[2][i] = rHumidity;
     calibrationData[3][i] = spo2;
     for (int j = 0; j < 4; j++) {
-    Serial.print(calibrationData[j][i]);
-    Serial.print(" ");
-  }
-  Serial.println();
+      Serial.print(calibrationData[j][i]);
+      Serial.print(" ");
+    }
+    Serial.println();
   }
   else
   {
+    computeStats();
+    if (printMeansAndStddevs)
+    {
+      Serial.println();
+      Serial.println("Means: " + String(means[0]) + " " + String(means[1]) + " " + String(means[2]) + " " + String(means[3]));
+      Serial.println("StdDevs: " + String(stdDevs[0]) + " " + String(stdDevs[1]) + " " + String(stdDevs[2]) + " " + String(stdDevs[3]));
+
+      w_hr   =  5 / stdDevs[0];   
+      w_temp =  1 / (stdDevs[1] * 10);   
+      w_hum  =  1 / (stdDevs[2] * 10);   
+      w_spo2 =  5 / stdDevs[3];
+
+      Serial.println("Weights: " + String(w_hr) + " " + String(w_temp) + " " + String(w_hum) + " " + String(w_spo2));
+      Serial.println();
+      printMeansAndStddevs = false;
+    }
     zScores[0] = getZScore(0, bpm);
     zScores[1] = getZScore(1, temp);
     zScores[2] = getZScore(2, rHumidity);
@@ -162,8 +198,8 @@ void printValues(float bpm, float spo2) {
     Serial.print("Temp: "); Serial.println(temp);
     Serial.print("Humidity: "); Serial.println(rHumidity);
     Serial.print("SpO2: "); Serial.println(spo2);
-    Serial.print("Stress Score: "); Serial.print(averageStress);
-    if (averageStress > 47)
+    Serial.print("Stress Score: "); Serial.print(stressScore);
+    if (stressScore > 80)
     {
       Serial.println(" Stress Detected");
     }
@@ -240,24 +276,6 @@ void processData(float redFiltered, float irFiltered) {
   last_diff = current_diff;
 }
 
-void computeStats() {
-  for (int i = 0; i < 4; i++) {
-    float sum = 0;
-    for (int j = 0; j < SIZE; j++) {
-      sum += (float)calibrationData[i][j];
-    }
-
-    means[i] = sum / SIZE;
-
-    float varianceSum = 0;
-
-    for (int j = 0; j < SIZE; j++) {
-      varianceSum += pow(calibrationData[i][j] - means[i], 2);
-    }
-    stdDevs[i] = sqrt(varianceSum / SIZE);
-  }
-}
-
 float calculateAverageStress(float stressArray[]) {
   float sum = 0;
   float averageStress;
@@ -288,14 +306,5 @@ void loop() {
     irFiltered = low_pass_filter_ir.process(ir);
 
     processData(redFiltered, irFiltered);
-    
-    computeStats();
-
-    float stressArray[5];
-
-    for (int i = 0; i < 5; i++) {
-      stressArray[i] = stressScore;
-    }
-    averageStress = calculateAverageStress(stressArray);
   }
 }
