@@ -1,8 +1,11 @@
 #include <MAX3010x.h>
 #include "filters.h"
 #include <math.h>
+#include <LiquidCrystal_I2C.h>
 
-#define SIZE 15
+LiquidCrystal_I2C lcd(0x27, 20, 4);
+
+#define CALIB_SIZE 5
 
 MAX30105 sensor;
 const auto kSamplingRate = sensor.SAMPLING_RATE_400SPS;
@@ -43,6 +46,7 @@ bool finger_detected = false;
 float last_diff = NAN;
 bool crossed = false;
 long crossed_time = 0;
+int i = 0;
 
 int average_bpm; 
 int average_spo2;
@@ -51,12 +55,12 @@ float spo2;
 float redFiltered, irFiltered;
 float stressScore;
 float w_hr, w_temp, w_hum, w_spo2;   
+char buffer[8];
 
 //temp
 const int lm35Pin0 = A0;
 float rawTemp0;
 float temp;
-int i = 0;
 
 //humidity
 const int humPin = A1;
@@ -67,17 +71,22 @@ float total;
 float humiditySamples[15];
 
 //calibration
-float calibrationData[4][SIZE];
+float calibrationData[4][CALIB_SIZE];
 float zScores[4];
 float means[4];
 float stdDevs[4];
 
 void initializeSensor() {
   Serial.begin(9600);
+  lcd.setCursor(0, 0);
   if (sensor.begin() && sensor.setSamplingRate(kSamplingRate)) {
-    Serial.println("Sensor initialized");
+    lcd.print("Sensors initialized!");
+    lcd.setCursor(0, 2);
+    lcd.print("Waiting for finger.");
   } else {
-    Serial.println("Sensor not found");
+    lcd.print("Sensor error!");
+    lcd.setCursor(0, 1);
+    lcd.print("Check connections!");
     while (1);
   }
 }
@@ -122,18 +131,18 @@ void resetFilters() {
 void computeStats() {
   for (int i = 0; i < 4; i++) {
     float sum = 0;
-    for (int j = 0; j < SIZE; j++) {
+    for (int j = 0; j < CALIB_SIZE; j++) {
       sum += (float)calibrationData[i][j];
     }
 
-    means[i] = sum / SIZE;
+    means[i] = sum / CALIB_SIZE;
 
     float varianceSum = 0;
 
-    for (int j = 0; j < SIZE; j++) {
+    for (int j = 0; j < CALIB_SIZE; j++) {
       varianceSum += pow(calibrationData[i][j] - means[i], 2);
     }
-    stdDevs[i] = sqrt(varianceSum / SIZE);
+    stdDevs[i] = sqrt(varianceSum / CALIB_SIZE);
   }
 }
 
@@ -158,58 +167,93 @@ void printValues(float bpm, float spo2) {
   {
     if (i == 0)
     {
-      Serial.println("Calibration Data: ");
+      lcd.clear();
+      lcd.setCursor(0, 0);
+      lcd.print("Calibration!");
+      delay(1000);
+      lcd.setCursor(0, 1);
+      lcd.print("Place finger.");
+      delay(1000);
+      lcd.setCursor(0, 2);
+      lcd.print("Stay calm.");
+      delay(1000);
     }
     calibrationData[0][i] = bpm;
     calibrationData[1][i] = temp;
     calibrationData[2][i] = rHumidity;
     calibrationData[3][i] = spo2;
-    for (int j = 0; j < 4; j++) {
-      Serial.print(calibrationData[j][i]);
-      Serial.print(" ");
-    }
-    Serial.println();
-  }
-  else
-  {
+    lcd.clear();
+    lcd.setCursor(0, 0);
+    lcd.print("HR:" + String(calibrationData[0][i]));
+    lcd.setCursor(0, 1);
+    lcd.print("Temp:" + String(calibrationData[1][i]));
+    lcd.setCursor(0, 2);
+    lcd.print("RHumidity:" + String(calibrationData[2][i]));
+    lcd.setCursor(0, 3);
+    lcd.print("SpO2:" + String(calibrationData[3][i]));
+    delay(1000);
     computeStats();
+    i++;
+  }
+  else 
+  {
     if (printMeansAndStddevs)
     {
-      Serial.println();
-      Serial.println("Means: " + String(means[0]) + " " + String(means[1]) + " " + String(means[2]) + " " + String(means[3]));
-      Serial.println("StdDevs: " + String(stdDevs[0]) + " " + String(stdDevs[1]) + " " + String(stdDevs[2]) + " " + String(stdDevs[3]));
+      lcd.clear();
+      lcd.setCursor(0, 0);
+      lcd.print("Means: " + String(means[0]) + " " + String(means[1]));
+      lcd.setCursor(0, 1);
+      lcd.print(String(means[2]) + " " + String(means[3]));
+      lcd.setCursor(0, 2);
+      lcd.print("StdDevs: " + String(stdDevs[0]) + " " + String(stdDevs[1]));
+      lcd.setCursor(0, 3);
+      lcd.print(String(stdDevs[2]) + " " + String(stdDevs[3]));
+      delay(2000);
 
       w_hr   =  5 / stdDevs[0];   
       w_temp =  1 / (stdDevs[1] * 10);   
       w_hum  =  1 / (stdDevs[2] * 10);   
       w_spo2 =  5 / stdDevs[3];
 
-      Serial.println("Weights: " + String(w_hr) + " " + String(w_temp) + " " + String(w_hum) + " " + String(w_spo2));
-      Serial.println();
+      lcd.clear();
+      lcd.setCursor(0, 0);
+      lcd.print("Weights: " + String(w_hr) + " " + String(w_temp));
+      lcd.setCursor(0, 1);
+      lcd.print(String(w_hum) + " " + String(w_spo2));
+      zScores[0] = getZScore(0, bpm);
+      zScores[1] = getZScore(1, temp);
+      zScores[2] = getZScore(2, rHumidity);
+      zScores[3] = getZScore(3, spo2);
+      lcd.setCursor(0, 2);
+      lcd.print("zScores: " + String(zScores[0]) + " " + String(zScores[1]));
+      lcd.setCursor(0, 3);
+      lcd.print(String(zScores[2]) + " " + String(zScores[3]));
+      stressScore = computeStressScore(zScores);
+      delay(2000);
+      lcd.clear();
       printMeansAndStddevs = false;
     }
-    zScores[0] = getZScore(0, bpm);
-    zScores[1] = getZScore(1, temp);
-    zScores[2] = getZScore(2, rHumidity);
-    zScores[3] = getZScore(3, spo2);
-    Serial.println("zScores: " + String(zScores[0]) + " " + String(zScores[1]) + " " + String(zScores[2]) + " " + String(zScores[3]));
-    stressScore = computeStressScore(zScores);
-    Serial.print("HR: "); Serial.println(bpm);
-    Serial.print("Temp: "); Serial.println(temp);
-    Serial.print("Humidity: "); Serial.println(rHumidity);
-    Serial.print("SpO2: "); Serial.println(spo2);
-    Serial.print("Stress Score: "); Serial.print(stressScore);
+    lcd.setCursor(0, 0);
+    lcd.print("HR:" + String(bpm, 2));
+    lcd.setCursor(10, 0);
+    lcd.print("Temp:" + String(temp, 2));
+    lcd.setCursor(0, 1);
+    lcd.print("RH:" + String(rHumidity, 2));  
+    spo2 = round(spo2 * 100) / 100.0;
+    dtostrf(spo2, 4, 1, buffer);
+    lcd.setCursor(10, 1);
+    lcd.print("SpO2:");
+    lcd.print(buffer);
+    lcd.setCursor(0, 2);
+    lcd.print("Stress Score: " + String(stressScore));
     if (stressScore > 80)
     {
-      Serial.println(" Stress Detected");
+      lcd.setCursor(0, 3);
+      lcd.print("Stress Detected!");
     }
-    else
-    {
-      Serial.println();
-    }
+    delay(500);
   }
-  i++;
-  if (i >= SIZE)
+  if (i == CALIB_SIZE)
   {
     calibrationEnable = false;
   }
@@ -285,7 +329,9 @@ float calculateAverageStress(float stressArray[]) {
   return averageStress = sum / 5;
 }
 
-void setup() {
+void setup() {  
+  lcd.init();
+  lcd.backlight();
   pinMode(lm35Pin0, INPUT);
   pinMode(humPin, INPUT);
   analogReference(DEFAULT);
@@ -293,6 +339,7 @@ void setup() {
 }
 
 void loop() {
+  lcd.backlight();
   auto sample = sensor.readSample(1000);
   float red = sample.red;
   float ir = sample.ir;
