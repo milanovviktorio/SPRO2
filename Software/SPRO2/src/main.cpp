@@ -5,7 +5,7 @@
 
 LiquidCrystal_I2C lcd(0x27, 20, 4);
 
-#define CALIB_SIZE 5
+#define CALIB_SIZE 20
 
 MAX30105 sensor;
 const auto kSamplingRate = sensor.SAMPLING_RATE_400SPS;
@@ -220,19 +220,15 @@ void printValues(float bpm, float spo2) {
       lcd.print("Weights: " + String(w_hr) + " " + String(w_temp));
       lcd.setCursor(0, 1);
       lcd.print(String(w_hum) + " " + String(w_spo2));
-      zScores[0] = getZScore(0, bpm);
-      zScores[1] = getZScore(1, temp);
-      zScores[2] = getZScore(2, rHumidity);
-      zScores[3] = getZScore(3, spo2);
-      lcd.setCursor(0, 2);
-      lcd.print("zScores: " + String(zScores[0]) + " " + String(zScores[1]));
-      lcd.setCursor(0, 3);
-      lcd.print(String(zScores[2]) + " " + String(zScores[3]));
-      stressScore = computeStressScore(zScores);
       delay(2000);
       lcd.clear();
       printMeansAndStddevs = false;
     }
+    zScores[0] = getZScore(0, bpm);
+    zScores[1] = getZScore(1, temp);
+    zScores[2] = getZScore(2, rHumidity);
+    zScores[3] = getZScore(3, spo2);
+    stressScore = computeStressScore(zScores);
     lcd.setCursor(0, 0);
     lcd.print("HR:" + String(bpm, 2));
     lcd.setCursor(10, 0);
@@ -245,11 +241,16 @@ void printValues(float bpm, float spo2) {
     lcd.print("SpO2:");
     lcd.print(buffer);
     lcd.setCursor(0, 2);
-    lcd.print("Stress Score: " + String(stressScore));
+    lcd.print("Stress Score: " + String(stressScore, 2));
     if (stressScore > 80)
     {
       lcd.setCursor(0, 3);
       lcd.print("Stress Detected!");
+    }
+    else
+    {
+      lcd.setCursor(0, 3);
+      lcd.print("                ");
     }
     delay(500);
   }
