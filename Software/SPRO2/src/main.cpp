@@ -5,7 +5,7 @@
 
 LiquidCrystal_I2C lcd(0x27, 20, 4);
 
-#define CALIB_SIZE 20
+#define CALIB_SIZE 15
 
 MAX30105 sensor;
 const auto kSamplingRate = sensor.SAMPLING_RATE_400SPS;
@@ -211,10 +211,10 @@ void printValues(float bpm, float spo2) {
       lcd.print(String(stdDevs[2]) + " " + String(stdDevs[3]));
       delay(2000);
 
-      w_hr   =  4 / stdDevs[0];   
-      w_temp =  1 / (stdDevs[1] * 6);   
-      w_hum  =  1 / (stdDevs[2] * 6);   
-      w_spo2 =  4 / stdDevs[3];
+      w_hr   =  3 / stdDevs[0];   
+      w_temp =  1 / (stdDevs[1]);   
+      w_hum  =  1 / (stdDevs[2] * 4);   
+      w_spo2 =  3 / stdDevs[3];
 
       lcd.clear();
       lcd.setCursor(0, 0);
@@ -243,7 +243,7 @@ void printValues(float bpm, float spo2) {
     lcd.print(buffer);
     lcd.setCursor(0, 2);
     lcd.print("Stress Score: " + String(stressScore, 2));
-    if (stressScore > 80)
+    if (stressScore > 70)
     {
       lcd.setCursor(0, 3);
       lcd.print("Stress Detected!");
