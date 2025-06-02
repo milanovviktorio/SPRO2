@@ -61,6 +61,7 @@ char buffer[8];
 const int lm35Pin0 = A0;
 float rawTemp0;
 float temp;
+float tempOffset = -1.9, tempAmpFactor = 16.0;
 
 //humidity
 const int humPin = A1;
@@ -76,7 +77,7 @@ float zScores[4];
 float means[4];
 float stdDevs[4];
 
-void initializeSensor() {
+void initializeSensors() {
   Serial.begin(9600);
   lcd.setCursor(0, 0);
   if (sensor.begin() && sensor.setSamplingRate(kSamplingRate)) {
@@ -99,8 +100,8 @@ void humidty(){
     total+=humiditySamples[i];
   }
   inputHumidity = total/15;
-  opampFactor = 4.75;
-  offset = 0.2325;
+  opampFactor = 4.8515;
+  offset = 0.2426;
   tempSet = 55;
   capOffset=1.28;
   capFactor=-6e-04;
@@ -210,10 +211,10 @@ void printValues(float bpm, float spo2) {
       lcd.print(String(stdDevs[2]) + " " + String(stdDevs[3]));
       delay(2000);
 
-      w_hr   =  5 / stdDevs[0];   
-      w_temp =  1 / (stdDevs[1] * 10);   
-      w_hum  =  1 / (stdDevs[2] * 10);   
-      w_spo2 =  5 / stdDevs[3];
+      w_hr   =  4 / stdDevs[0];   
+      w_temp =  1 / (stdDevs[1] * 6);   
+      w_hum  =  1 / (stdDevs[2] * 6);   
+      w_spo2 =  4 / stdDevs[3];
 
       lcd.clear();
       lcd.setCursor(0, 0);
@@ -336,7 +337,7 @@ void setup() {
   pinMode(lm35Pin0, INPUT);
   pinMode(humPin, INPUT);
   analogReference(DEFAULT);
-  initializeSensor();
+  initializeSensors();
 }
 
 void loop() {
@@ -347,7 +348,7 @@ void loop() {
   
   humidty();
   rawTemp0 = analogRead(lm35Pin0);
-  temp = rawTemp0 * 5*10.0/1023;
+  temp = ((rawTemp0 * 500.0/1024.0)-100.0*tempOffset)/tempAmpFactor;
 
   if (detectFinger(red)) {
     redFiltered = low_pass_filter_red.process(red);
